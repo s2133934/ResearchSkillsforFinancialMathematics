@@ -42,6 +42,7 @@ Long memory volatility referred to the slow decay of the autocorrelation functio
 
 Things to remember when writing introductions:
 \begin{enumerate} %in other words, a list!!
+\label{list:intro_list}
 \item Keep it short.
 \item Provide context of your work. Cite literature.
 \item Be precise. Avoid `big' words, such `novel', `revolutionary', `ultimate': never suggest that the paper contains more than it does.
@@ -49,13 +50,13 @@ Things to remember when writing introductions:
 \item It is the last part to write.
 \end{enumerate}
 
-REQUIRED: The rest of the paper is structured as follows. In Section~\ref{Division into sections} we discuss how to split your documents into sections, in Section~\ref{Referencing}, we examine  managing  references. In Section~\ref{formatting}, we share some tips on formatting. We conclude with Section~\ref{conclusion} in which we provide some final remarks.'
+REQUIRED: The rest of the paper is structured as follows. In Section~\ref{sec:black_scholes_foundations} we discuss how to split your documents into sections, in Section~\ref{sec:fractionalBm}, we examine  managing  references. In Section~\ref{formatting}, we share some tips on formatting. We conclude with Section~\ref{conclusion} in which we provide some final remarks.'
 
 
 
 \section{Black Scholes model and theoretical foundations}
 \label{sec:black_scholes_foundations}
-The Black and Scholes (B&S) model was first introduced several decades ago, and is arguably the most well known option pricing model, and it is a fundamental building block of almost all pricing models \cite{BlackScholesOR}. Despite the fact that it underpins (on some level) almost all asset pricing models developed since, it is rarely used directly in its pure form due to its well known shortcomings. We give a short overview here. 
+The Black and Scholes (B&S) model was first introduced several decades ago, and is arguably the most well known option pricing model, and it is a fundamental building block of almost all pricing models \cite{BlackScholesOR}. Despite the fact that it underpins (on some level) almost all asset pricing models developed since, it is rarely used directly in its pure form due to its well known shortcomings. We give a short overview here. List blah blah... 
 
 The price of an asset ($S_t$) at the current time is not generally expected to be the same as it is currently. Broadly speaking, an asset's value will grow (or shrink) on average by some rate $\mu \in [0,1]$ (under the the probability measure \mathbb P). The formula also contains a volatility term $\sigma$, representing the variability of the price of an asset in the short term. The model takes the form of Equation \ref{eqn:black_and_scholes}.
 
@@ -134,7 +135,7 @@ In rough volatility models, the volatility of a given asset at any time point is
 It differs from the classical Brownian motion as it has the following covariance function for $0 < t_1 < t_2$: $$\mathbb{E}[\textit{$W^H_{t_1}$} \textit{$W^H_{t_2}$}] = 1/2 (|t_1|^{2H}+|t_2|^{2H}-|t_1-t_2|^{2H})$$ If $H=1/2$ the covariance equals $0$, which means the increments are not correlated, giving us the classical Brownian motion. If $H<1/2$ then the covariance is negative, meaning the increments of the process are negatively correlated. If $H>1/2$ then the covariance is positive, meaning the increments of the process are positively correlated.  Therefore, by setting $H\in(0,1)\setminus\{\frac{1}{2}\}$, we allow for dependence between the increments of fBM, making the volatility process non-Markovian.  In rough volatility models, \textit{H} is generally chosen to be less than 1/2 as this is shown to be consistent with time series data (\cite{GATHERAL}) which we will discuss next.
 \\
 \\
-Comte and Renault [16] proposed to model log-volatility using fBM, in order to ensure a long memory property by choosing the Hurst parameter to be H > 1/2, i.e increments of the fBM are positively correlated, this is called the Fractional Stochastic Volatility (FSV). However, using the log- volatility with H < 1/2 of the fBM, this model is now potential to be not only consistent with properties observed for time series but also consistent with the shape of the volatility surface. This modification is called the Rough Fractional Stochastic Volatility (RFSV).
+Comte and Renault [16] proposed to model log-volatility using fBM, in order to ensure a long memory property by choosing the Hurst parameter to be H > 1/2, i.e increments of the fBM are positively correlated, this is called the Fractional Stochastic Volatility (FSV). However, using the log- volatility with H < 1/2 of the fBM, this model is now potential to be not only consistent with properties observed for the volatility in time series but also consistent with the shape of the volatility surface. This modification is called the Rough Fractional Stochastic Volatility (RFSV). It is important to mention that eventhough the RFSV does not present a long memory property, classical statistical procedures have encountered that data generated from the model have the presence of long memory property.
 
 
 \subsection{Evidence of rough volatility}
@@ -202,13 +203,25 @@ then $X_t^{(n)} \rightarrow W_t$ \textit{in distribution for} $t\ge0$ \textit{on
 \\
 
 By being able to extend this theorem to fBM, one could approximate it using i.i.d. sequences of random variables leading to a simplified simulation process. Again, without going into too much detail, (\cite{HORVATH}) proved an extension of this theorem which approximates the logarithm of the stock price under a rough volatility model under the assumption that the i.i.d. random variables have a finite second moment (variance in this case) and a number of other conditions which we will omit but can be found in the paper. In terms of pricing, this approximation could then be applied to fractional binomial trees, which opens the door to pricing American-type options under rough volatility models. However, the branches of such trees generally do not recombine which adds to the complexity of this pricing method.   
-use of several pricing tools such as the Black-Scholes formula and other pricing PDE's due to the non-deterministic nature of the volatility process.  Pricing via Monte Carlo simulation of the asset price and volatility processes is perhaps the one pricing tool that works but it can be slow in approximating continuous time solutions within a sufficient level of accuracy, especially for simulating non-Markovian process due to the extra memory required to store previous process states. Here, we give a brief overview of some theories that were introduced to combat the computational expense of exact Monte Carlo simulation of the volatility process. Namely, we discuss the Hybrid scheme from (\cite{BENNEDSON}), the Markovian representation of fBM in (\cite{HARMS}) and the extension of the Donsker theorem to fBM in (\cite{MUGURUZA}). These methods were introduced to improve the efficiency of the simulation of fBM and volatility processes while maintaining a reasonable level of accuracy.
+use of several pricing tools such as the Black-Scholes formula and other pricing PDE's due to the non-deterministic nature of the volatility process.  Pricing via Monte Carlo simulation of the asset price and volatility processes is perhaps the one pricing tool that works but it can be slow in approximating continuous time solutions within a sufficient level of accuracy, especially for simulating non-Markovian process due to the extra memory required to store previous process states. Here, we give a brief overview of some theories that were introduced to combat the computational expense of exact Monte Carlo simulation of the volatility process. Namely, we discuss the Hybrid scheme from (\cite{Bennedsen_2017}), the Markovian representation of fBM in (\cite{HARMS}) and the extension of the Donsker theorem to fBM in (\cite{Muruguza_2005}). These methods were introduced to improve the efficiency of the simulation of fBM and volatility processes while maintaining a reasonable level of accuracy.
 
 \subsection{The Hybrid Scheme}
-The Hybrid Scheme was introduced by (\cite{BENNEDSON}) in (\cite{PAPER}) in which they study simulation methods for Brownian semistationary processes. A brownian semistationary process can be written as $$X(t)=\int_{-\infty}^t g(t-s) \sigma(s) dW(s),  \ \  t\in\mathbb{R}$$ where $\sigma$ is a predictable process with respect to the given filatration. It is mentioned in the paper that when $g(x) \propto x^\alpha$ and $\alpha \in (-\frac{1}{2}, \frac{1}{2}) \setminus \{0\}$, the process behaves (locally) like a fBM with Hurst paramter $H=\alpha+1/2$.  Therefore, being able to efficiently simulate such a process would help to improve computational efficiency for pricing in some rough volatility models.  
-\\
-\\
-In the referenced paper, a method for simulating such a process was introduced. The given scheme involves approximating the function $g$ using a step function except for near 0, where a power function is used for approximation. Through a series of derivations,  the resulting discretisation scheme is written as a linear combination of a Riemann sum and Wiener integrals. The scheme is given by: $$X_n(t) = \hat{X}_n(t) + \tilde{X}_n(t)$$ where $$\hat{X}_n(t) = \sum_{k=1}^{\kappa} L_g(\frac{k}{n}) \sigma (t-\frac{k}{n}) \int_{t-\frac{k}{n}}^{t-\frac{k}{n}+\frac{1}{n}}(t-s)^\alpha dW(s)$$ and $$\tilde{X}_n(t) = \sum_{k=\kappa+1}^{N_n}g(\frac{b_k}{n})\sigma(t-\frac{k}{n})(W(t-\frac{k}{n}+\frac{1}{n})-W(t-\frac{k}{n})),$$ with $L_g$ chosen so that $g(t-s) \approx (t-s)^\alpha L_g(\frac{k}{n})$, \ \ $t-s \in [\frac{k-1}{n},\frac{k}{n}]$
+\label{subsec:hybrid}
+The Hybrid Scheme was introduced by Bennedsen et al. \cite{Bennedsen_2017} in (\cite{PAPER}) in which they study simulation methods for Brownian semistationary processes. A brownian semistationary process can be written as $$X(t)=\int_{-\infty}^t g(t-s) \sigma(s) dW(s),  \ \  t\in\mathbb{R}$$ 
+where $\sigma$ is a predictable process with respect to the given filatration. It is mentioned in the paper that when $g(x) \propto x^\alpha$ and 
+$\alpha \in (-\frac{1}{2}, \frac{1}{2}) \setminus \{0\}$
+, the process behaves (locally) like a fBM with Hurst paramter $H=\alpha+1/2$.  Therefore, being able to efficiently simulate such a process would help to improve computational efficiency for pricing in some rough volatility models.  
+
+In the referenced paper, a method for simulating such a process was introduced. The given scheme involves approximating the function $g$ using a step function except for near 0, where a power function is used for approximation. Through a series of derivations,  the resulting discretisation scheme is written as a linear combination of a Riemann sum and Wiener integrals. The scheme is given by Equation \cite{new_paper}: 
+
+$$X_n(t) = \hat{X}_n(t) + \tilde{X}_n(t)$$ where equation 
+
+\ref{eqn:crappy_formula} shows the blah blah.
+\begin{equation}
+\label{eqn:crappy_formula}
+\hat{X}_n(t) = \sum_{k=1}^{\kappa} L_g(\frac{k}{n}) \sigma (t-\frac{k}{n}) \int_{t-\frac{k}{n}}^{t-\frac{k}{n}+\frac{1}{n}}(t-s)^\alpha dW(s)
+\end{equation}
+and $$\tilde{X}_n(t) = \sum_{k=\kappa+1}^{N_n}g(\frac{b_k}{n})\sigma(t-\frac{k}{n})(W(t-\frac{k}{n}+\frac{1}{n})-W(t-\frac{k}{n})),$$ with $L_g$ chosen so that $g(t-s) \approx (t-s)^\alpha L_g(\frac{k}{n})$, \ \ $t-s \in [\frac{k-1}{n},\frac{k}{n}]$
 \\
 In terms of applying the scheme to rough volatility models, the Hybrid Scheme was used for option pricing in the Bergomi model via Monte Carlo simulation, as is discussed in the referenced paper. Using the Hybrid Scheme in this setting simplified the simulation process (\cite{see page 20 of BENNEDSON}) and reduced the computational cost compared to producing exact simulations from the model.  The results from using the scheme were then compared to exact results from the Bergomi model and it showed that the Hybrid Scheme was able to produce almost exactly the same volatility smile as that produced by exact simulation from the Bergomi model while being significantly more efficient.
 \subsection{Markovian Representation of fBM}
@@ -216,7 +229,7 @@ Without going into too much detail, (\cite{HARMS}) showed in (\cite{PAPER}) that
 \\
 \\
 Using this approximation for fBM, a discrete Monte Carlo scheme for the rough Bergomi model can be acheived and since the representation is Markovian, it improves efficiency. It is also mentioned that in terms of error and complexity,  this method outperforms several other computational methods. However, it is outperformed by the Hybrid Scheme that was discussed earlier. 
-
+\ref{subsec:hybrid}
 \subsection{Extension of Donkser's Theorem to fBM}
 Like the previous examples, the motivation of extending Donsker's theorem for Brownian motion to fBM is to be able to approximate fBM in a way that would reduce computational cost. To give some context,  we state Donsker's Theorem.
 \\
