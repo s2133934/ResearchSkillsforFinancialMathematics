@@ -1,0 +1,164 @@
+  \documentclass[12pt,oneside]{article}
+  \title{Title - usually shorter titles are better}
+  \date{ Date }
+  \author{Names, in alphabetical order}
+  \usepackage[rsfm,fancyhdr,hyperref,colour]{edmaths_mod}
+  \flushbottom
+
+  \begin{document}
+  \pagenumbering{roman}
+  \maketitle
+
+  \begin{abstract}Abstract - a very concise text which roughly summarizes contents of the document.  Almost never longer than half a page, usually much shorter (200-300 words).
+  
+We should make sure that we do not try to explain our field or make grand statement about our work.
+   \end{abstract}
+
+
+  \tableofcontents
+ % \addcontentsline{toc}{Contents}
+ \newpage
+ \pagenumbering{arabic}
+
+\section{Introduction}
+The aim of this document is to provide some guidance as to how a good report/paper might look like. 
+This is by no means an  exhaustive discussion, but some basics are covered. 
+
+In the introduction we describe the importance of the problem we address in the paper. We should also place our piece in the context of related work already present in the literature (including recent achievements), citing the sources carefully and precisely.
+We should provide a (brief) overview of what is done in the paper. 
+An informal statement of the problem is usually welcome.
+
+
+
+Things to remember when writing introductions:
+\begin{enumerate}
+\item Keep it short.
+\item Provide context of your work. Cite literature.
+\item Be precise. Avoid `big' words, such `novel', `revolutionary', `ultimate': never suggest that the paper contains more than it does.
+\item Do provide an overview of what is done in the paper.
+\item It is the last part to write.
+\end{enumerate}
+
+Quite often the introduction is concluded by a `wordy table of contents', which describes what is done in which section of the paper.
+For this particular document, it could look like that:
+`The rest of the paper is structured as follows. In Section~\ref{Division into sections} we discuss how to split your documents into sections, in Section~\ref{Referencing}, we examine  managing  references. In Section~\ref{formatting}, we share some tips on formatting. We conclude with Section~\ref{conclusion} in which we provide some final remarks.'
+
+
+
+
+
+
+\section{My first section - dividing your document into sections}
+\label{Division into sections}
+The main content of our paper/report is divided into sections. 
+For longer forms, such as a book or a master thesis, sections are further collected into larger chunks which form Chapters.
+
+When dividing content in sections (or chapters), we often think about dividing it into smaller, more or less self-contained bits. Some (very rough) examples follow.
+
+First example:
+\begin{enumerate}
+\item Introduction, including some statement of the problem.
+\item Description of methods.
+\item Theory for the method.
+\item Numerical results.
+\end{enumerate}
+
+Second example:
+\begin{enumerate}
+\item Introduction, with informal statement of results.
+\item Preliminaries.
+\item Rigorous statement of results.
+\item Numerics.
+\item Proofs.
+\end{enumerate}
+
+\section{My second section - referencing}
+\label{Referencing}
+When writing a report, it is crucial to reference the literature properly. 
+Say we write a paper in which different notions of convergence of sequence of Markov processes play a crucial role. 
+After we discuss differences between the notions, 
+we might want to write:
+`For a detailed and extensive treatment of the subject we refer to \cite{ethier/kurtz:2009}.
+If one of the steps from our proof require criterion from Theorem~3.10.2 from that book, and for some reason we feel we don't have to recall in the paper, we might write
+`Here one can apply a criterion \cite[Theorem~3.10.2]{ethier/kurtz:2009} according to which it is sufficient to ...' and explain the criterion.
+It would be even nicer if we provide the exact page.
+
+Analogously, if we want to recall the paper in which Black–Scholes got its name, we would cite \cite{merton:1973}.
+
+
+\section{My Third Section - some remarks on formatting}
+\label{formatting}
+When writing mathematical expressions like 
+\begin{align*}
+\int_{0}^{1}x\mathrm{d}x,
+\end{align*}
+or
+\begin{equation}
+\int_{0}^{1}x\mathrm{d}x,
+\end{equation}
+we should remember about punctuation. 
+Our equations should be readable. 
+This one
+\begin{align*}
+A^{N}\widetilde{f}(\eta,\zeta)
+=
+A_{neu}^{N}f(\eta) + \widehat{S}A_{sel}^{N}f(\eta)
++
+\frac{1}{\hat{S}}A_{neu}^{N}
+f_{1}(\eta,\zeta)
++ A_{sel}^{N}\left( 
+f_1(\eta,\xi)
+  \right) 
+- \widehat{S}f_1(\eta, \xi) 
+ = A_{neu}^{N}f(\eta)+  A_{sel}^{N}\left( 
+f_1(\eta, \xi) 
+ \right)
+ + \mathcal{O}\left(
+ \frac{1}{\widehat{S}}
+ +
+ \frac{\widehat{S}}{S} + \frac{\widehat{S}}{K}
+ \right)
+\end{align*}
+is not, while this one
+\begin{multline*}
+A^{N}\widetilde{f}(\eta,\zeta)
+\\
+=
+A_{neu}^{N}f(\eta) + \widehat{S}A_{sel}^{N}f(\eta)
++
+\frac{1}{\hat{S}}A_{neu}^{N}
+f_{1}(\eta,\zeta)
++ A_{sel}^{N}\left( 
+f_1(\eta,\xi)
+  \right) 
+- \widehat{S}f_1(\eta, \xi) 
+\\
+ = A_{neu}^{N}f(\eta)+  A_{sel}^{N}\left( 
+f_1(\eta, \xi) 
+ \right)
+ + \mathcal{O}\left(
+ \frac{1}{\widehat{S}}
+ +
+ \frac{\widehat{S}}{S} + \frac{\widehat{S}}{K}
+ \right)
+\end{multline*}
+ is a bit better.
+
+When choosing how you format things do think about the reader (i.e. $\frac{1}{2}$ in inline text is harder to read than $1/2$).
+And \emph{please}, let's not use bullet points in our reports.
+
+This collection of formatting hints is quite far from exhaustive, but does give us some idea.
+
+\section{Conclusion}
+\label{conclusion}
+In the vast majority of papers this section is not present. It could be used to provide a brief summary of the paper or some areas for further research. Most likely it won't be useful for the final essays.
+
+The final point in this document is of high importance. 
+We should remember that whatever we write, the first version of the text is always far from perfect. 
+It is critical to work on the text after the first version is created and rewrite it where it could be improved. 
+ \bibliographystyle{plain}  % Or use the `amsrefs' package (http://www.ams.org/tex/amsrefs.html)!
+\bibliography{my_bibtex_file.bib}
+ \addcontentsline{toc}{section}{Bibliography}
+\end{document}
+
+ ---------------
