@@ -12,7 +12,7 @@
   \pagenumbering{roman}
   \maketitle
 
-  \begin{abstract}This aim of this review is to bring together and summarise the key works leading to the inception of rough volatility models, and recent advances made to make their implementation feasible. This work focuses on the theoretical background driving the `rough' volatility model, and how they arose. Key aspects of these models, such as evidence in the market, are used to motivate the consideration of volatility as `rough' is discussed. We present how rough volatility can be used for pricing options, and an overview of two well documented examples of this type of model that provide a better fit to empirical market volatility data. Given that simulation of rough volatility models tends to be slow, this work provides a brief account of the computational advancements which allow these models to be tractable and useful.
+  \begin{abstract}The aim of this report is to bring together and summarise the key works leading to the inception of rough volatility models, and note recent advances to make implementation feasible. This work focuses on the theoretical background driving the `rough' volatility models, and how they arose. Key results from empirical market analysis that have been used to motivate the consideration of volatility as a `rough' process are discussed \cite{Gatheral2014}. We present how rough volatility can be used for pricing options, and give an overview of two well documented examples of this type of model that provide a better fit to market volatility data. Given that simulation of rough volatility models tends to be slow, this work provides a brief account of the computational advancements which allow these models to be tractable and computationally efficient.
   \end{abstract}
 
   \tableofcontents
@@ -21,26 +21,25 @@
  \pagenumbering{arabic}
 
 \section{Introduction}
-Financial industry has always sought better models to improve market replication. In particular, to obtain better accuracy in pricing derivatives contracts, the underlying asset behaviour must be correctly modelled. One of the most important parameters in achieving this goal, is a good approximation of the volatility parameter. Empirical evidence has shown the volatility not be a constant parameter as the Black-Scholes model considers as an assumption, but can be thought as a process by it self.
+The financial industry has always sought better models to improve market replication. In particular, to obtain better accuracy in pricing derivatives contracts, the underlying asset behaviour must be correctly modelled. One of the most important parameters in achieving this goal is the volatility parameter. Empirical evidence has shown that the volatility is not a constant parameter, which the Black-Scholes model considers as an assumption, and can be thought of as a stochastic process.
 \\
 
-Models to estimate the volatility can be divided in historical models and implied volatility models, where the later uses as their principal input the volatility observed from the market data. On the other hand, stochastic models (which are part of historic model) have made a great improvement to capture characteristics observed in the volatility, as they they can model an individual dynamic for the volatility process, e.g forward volatility. However, they tend to differ when comparing to the observed dynamics. For example, stochastic volatility models such as Hull and White, Heston and SABR models generate the implied volatility surfaces with different shapes as the ones observed from the empirical observed volatility surface.
+Models to estimate the volatility can be divided into historical models and implied volatility models, where the latter uses derives the volatility of the underlying asset from the option price observed in the market. On the other hand, stochastic models (which fall into the historical models category) have made great improvements in capturing characteristics observed in market volatility, as they can model continuous-time dynamics for the volatility process. However, they tend to differ when comparing to the observed dynamics in the market. For example, stochastic volatility models such as the Hull and White, Heston and SABR models generate the implied volatility surfaces with different shapes as the ones observed in the market. 
 \\
 
-Furthermore, over the last few decades, researchers have seen how the volatility of an asset is not necessarily a smooth function as it was previously thought, but was discovered to have contradictory properties that would render it as `rough'. The term, originally coined by Gatheral et al.\cite{Gatheral2014} in their seminal work on the matter,
-has become synonymous with modeling volatility as a stochastic process in its own right, and how this is incorporated into models and implements continues to be an active area of research.
+In order to produce a better replication of the volatility process that is seen in the market, Rough Volatility models were introduced. Rough volatility models are driven by a fractional Brownian motion (fBm), which incorporates the non-Markovian noise into the volatility process that is observed in market data. The inclusion of fBm with Hurst parameter $H\in(0,1/2)$ also introduces into the model the empirically observed `rough' smoothness properties of the volatility process. %Furthermore, over the last few decades, researchers have seen how the volatility of an asset is not necessarily a smooth function as it was previously thought, but was discovered to have contradictory properties that would render it as "rough". 
+The term (`rough'), originally coined by Gatheral et al.\cite{Gatheral2014} in their seminal work on the matter, has become synonymous with modelling volatility as a stochastic process in its own right, and how this is incorporated into models and implemented continues to be an active area of research. In particular, the non-Markovian property of fBm essentially restricts pricing methods under Rough Volatility models to Monte Carlo simulation, which can generally be quite slow. Advancements in this area of numerical approximation such as the Hybrid Scheme \cite{Bennedsen2017} and an extension of Donsker's theorem to fBm \cite{Horvath2017} have provided some solutions to this computational burden, with work still progressing in this particular area of research.
 \\
 
-
-This review is structured as follows. In Section~\ref{sec:black_scholes_foundations} we summarise the theoretical foundations of the volatility models, and this is followed in Section~\ref{sec:rough_volatility}, with a more detailed examination of the rough volatility model. In Section~\ref{sec:comp_advancement}, we look at the computational advancements both numerically and technologically that allow these models to be tractable. We conclude with Section~\ref{sec:summary&futurework} in which we provide some final remarks.
+This review is structured as follows. In Section~\ref{sec:black_scholes_foundations} we summarise the theoretical foundations of volatility models and give a brief overview of fBm. In Section~\ref{sec:rough_volatility}, we discuss the evidence of rough volatility in the market, pricing with rough volatility models and provide a detailed discussion of both the Rough Bergomi and Rough Heston models. In Section~\ref{sec:comp_advancement}, we look at the computational advancements in both numerical methods and technologically that allow rough volatility models to be tractable. We conclude with Section~\ref{sec:summary&futurework} in which we provide some final remarks.
 
 \section{Theoretical foundations}
 \label{sec:black_scholes_foundations}
 
-The Black and Scholes (BS) model was first introduced in the 1970's as an improvement of the very early work by Bachelier \cite{Bachelier1900}, and is arguably the most well known option pricing model \cite{BlackScholes1973}. It is a fundamental building block of almost all current pricing models, but it is rarely used directly due to its well known and documented shortcomings. Therefore we give a short overview as a precursor to the remaining discussion of this report.
+The Black and Scholes (BS) model was first introduced in the 1970's as an improvement to the very early work by Bachelier \cite{Bachelier1900}, and is arguably the most well known option pricing model \cite{BlackScholes1973}. It is a fundamental building block of almost all current pricing models, but it is rarely used directly due to its well known and documented shortcomings. Therefore we give a short overview as a precursor to the remaining discussion of this report.
 \\
 
-The price of an option ($S_t$) at a time $t$ is not generally expected to remain at its current value for long periods. Broadly speaking, the value of any asset will increase (or decrease) on average by some rate $\mu\in\mathbb{R}$%any real?really??
+The price of an option ($S_t$) at a time $t$ is not generally expected to remain at its current value for long periods. Broadly speaking, the value of any asset will increase (or decrease) on average by some rate $\mu\in\mathbb{R}$%any real?really?? technically yeah
 . The BS model also contains a volatility term $\sigma$, representing the variability of the price of an asset in the short term. The model takes the form of Equation \ref{eqn:black_and_scholes}.
 
 \begin{equation}
@@ -55,10 +54,10 @@ The key shortcomings of the model are firstly that $\mu$ and $\sigma$ are repres
 \\
  % Further, this model is designed with European type options in mind, where there is no option for an early exercise date. It also assumes independence of all assets which is also not the case in a true scenario.
 
-Volatility estimation can be broadly put into two related but distinct classes, historic and implied volatility. Implied volatility model is also known as forward looking model, where the implied volatility can be defined as the parameter needed for a theoretical model, such as the BS model, to have the same option price as the one observed in the market.
+Volatility estimation can be broadly put into two related but distinct classes, historical and implied volatility. Implied volatility model is also known as forward looking model, where the implied volatility can be defined as the parameter needed for a theoretical model, such as the BS model, to have the same option price as the one observed in the market.
 \\
 
-Historic estimation model, also known as backward looking model, uses the historical data as the main input to estimate the volatility of a given asset. One example of historical model is the standard deviation (single point estimate). However, this method does not capture the whole dynamic of the parameter as the Stochastic models do, where they allow volatility to be a stochastic process.Stochastic models fall into a parametric category where we assume a distribution for our data. Nevertheless, the estimation of model parameters can be challenging and computational tractability is a key factor. However, with the advent of accessible neural network technologies and recent developments in numerical methods for solving these types of problems \cite{Horvath2019}, it is anticipated that these models will become ever more popular as they have evolved to have a better accuracy of the market data.
+A historical estimation model, also known as backward looking model, uses the historical data as the main input to estimate the volatility of a given asset. One example of a historical model is the standard deviation (single point estimate). However, this method does not capture the whole dynamic of the volatility process like the Stochastic models do, where they allow volatility to be a stochastic process. Stochastic models fall into the parametric category where we assume a distribution for our data. Nevertheless, the estimation of model parameters can be challenging and computational tractability is a key factor. However, with the advent of accessible neural network technologies and recent developments in numerical methods for solving these types of problems \cite{Horvath2019}, it is anticipated that these models will become ever more popular as they have evolved to have a better accuracy of the market data.
 \\
 
 In the following sections, we introduce a popular stochastic model for volatility, and a subsequent improvement of this model. This extends the BS model significantly by considering volatility as a stochastic process in its own right, and further, observing the increments of Brownian motions as correlated, as was not done thus far. Armed with this, we are adequately prepared to describe how the rough volatility model is formed.
@@ -80,14 +79,14 @@ dv_t = \kappa (\theta - v_t)dt + \xi\sqrt{v_t}dW_t^{v}
 As we can see in the above, the volatility from the BS model, $\sigma$ is replaced with the square root of variance, which is now a process. The parameters for the dynamic of the variance can be interpreted as: $\xi$, the `volatility of volatility' which allows for control of the curvature of the volatility smile, $\kappa$, the rate at which $v_t$ returns to 0 (the mean reversion); and $\theta$ which is the long-running price variance. 
 \\
 
-The Heston model has two Brownian motion components, one corresponding to the asset price ($W^s$), and one corresponding to the asset variance ($W^v$). From It\^o isometry we have $\langle  dW_t^{s} dW_t^{v}\rangle$ = $\rho dt$, where $\rho$ is the correlation coefficient for these two brownian motions.
+The Heston model has two Brownian motion components, one corresponding to the asset price ($W^s$), and one corresponding to the asset variance ($W^v$). From It\^o isometry we have $\langle  dW_t^{s} dW_t^{v}\rangle$ = $\rho dt$, where $\rho$ is the correlation coefficient for these two Brownian motions.
 \\
 
 However, from a time series modelling point of view, stochastic volatility models, such as the Heston model have been criticised for not taking into account the long memory of the observed volatility of returns. Therefore, to include this characteristic, the fBM model was developed. 
 
 \subsection{Fractional Brownian Motion}
 \label{sec:fractionalBm}
-In addition to describe the improvement made for modeling the volatility, as mentioned before, it is important to introduce the concept of fractional Brownian Motion (fBM), as it is a fundamental component of rough volatility models described in Section \ref{sec:rough_volatility}. The great advantage in fBm, is that the increments of the process are not necessarily independent, thus the process cannot be considered Markovian. The inclusion of fBm originates from the analysis of empirical time series data which suggests that the volatility process is non-Markovian, and possesses certain smoothness properties, as is further detailed in \cite{Gatheral2014}. As such, fBM can be written as a stochastic process $(W^H_t)_{t\ge0}$ where \textit{H} is called the Hurst parameter with $\textit{H} \in (0,1)$. Similar to the classical Brownian motion, it has the following properties: 
+In addition to describe the improvement made for modelling the volatility, as mentioned before, it is important to introduce the concept of fractional Brownian Motion (fBM) fBm is a fundamental component of rough volatility models described in Section \ref{sec:rough_volatility}. The key  advantage in fBm, is that the increments of the process are not necessarily independent, thus the process cannot be considered Markovian. The inclusion of fBm originates from the analysis of empirical time series data which suggests that the volatility process is non-Markovian, and possesses certain smoothness properties, as is further detailed in \cite{Gatheral2014}. As such, fBM can be written as a stochastic process $(W^H_t)_{t\ge0}$ where \textit{H} is called the Hurst parameter with $\textit{H} \in (0,1)$. Similar to the classical Brownian motion, it has the following properties: 
 \begin{enumerate} 
 \item The process is Gaussian and H\"{o}lder-continuous in time. 
 \item $(\textit{$W^H_0$})=0$  
@@ -101,10 +100,10 @@ $\forall t \ge 0$
 \mathbb{E}[W^H_{t_1}W^H_{t_2}]=1/2(|t_1|^{2H}+|t_2|^{2H}-|t_1-t_2|^{2H})
 \end{equation}
 
-If $H=1/2$ the covariance becomes 0, meaning that increments are not correlated, giving us the classical Brownian motion. If $H<1/2$ then the covariance is negative, meaning the increments of the process are negatively correlated. Finally, if $H>1/2$ then the covariance is positive, meaning the increments of the process are positively correlated. Therefore, by setting $H\in(0,1)\setminus\{\frac{1}{2}\}$, we allow for dependence between the increments of fBM, making the volatility process non-Markovian.
+If $H=1/2$ the covariance becomes 0, meaning that increments are not correlated, giving us the classical Brownian motion. If $H<1/2$ then the covariance is negative, meaning the increments of the process are negatively correlated. Finally, if $H>1/2$ then the covariance is positive, meaning the increments of the process are positively correlated. Therefore, by setting $H\in(0,1)\setminus\{\frac{1}{2}\}$, we allow for dependence between the increments of fBM. Hence, by modelling the volatility process to be driven by fBm with $H\in(0,1)\setminus{1/2}$ the volatility process becomes non-Markovian.
 \\
 
-Now we are ready to introduce the concept of rough volatility models which gives volatility a short memory property, thus contradicting the widely accepted stylized fact that the volatility process is long memory. %https://arxiv.org/pdf/1411.7653.pdf
+Now we are ready to introduce the concept of rough volatility models which gives volatility a short memory property, thus contradicting the largely accepted fact that the volatility process is long memory. %https://arxiv.org/pdf/1411.7653.pdf
 
 \section{Rough volatility}
 \label{sec:rough_volatility}
@@ -124,7 +123,7 @@ Evidence to support the accuracy of the rough volatility  has been well explored
 \mathbb{E}[|log(\sigma_\Delta)-log(\sigma_0)|^q]=K_q\nu^q\Delta^{qH}
 \end{equation}
 
-where $\Delta$ is the increment size, $q>0$ and $\nu>0$. The distribution of the increments was also shown to be  approximately Gaussian, leading  to a proposed model for the asset price and volatility process using fractional Brownian motion given by Equations \ref{eqn:rough_asset}, \ref{eqn:roughvol}, and \ref{eqn:OU_rough}.
+where $\Delta$ is the increment size, $q>0$ and $\nu>0$. Moreover, fBm enjoys a scaling property almost identical to Equation \ref{eqn:scaling_prop}. The distribution of the increments was also shown to be  approximately Gaussian, leading  to a proposed model for the asset price and volatility process using fractional Brownian motion given by Equations \ref{eqn:rough_asset}, \ref{eqn:roughvol}, and \ref{eqn:OU_rough}.
 
 \begin{equation}
 \label{eqn:rough_asset}
@@ -140,7 +139,7 @@ where $\Delta$ is the increment size, $q>0$ and $\nu>0$. The distribution of the
 X_{t}=\vega\int_{-\infty}^{t} e^{-(t-s)\alpha}dW_{t}^{H}+m,
 \end{equation}
 
-where $\mu_{t}$ is the drift term, $Z_{t}$ is a standard Brownian Motion, $X_{t}$ is a fractional Ornstein–Uhlenbeck process with $\alpha>0$, $m\in\mathbb{R}$ and $0<H<1/2$ is the measured smoothness of the volatility. We should also mention that $Z$ and $W^{H}$ are correlated in general. This model was coined the RFSV (Rough Fractional Stochastic Volatility) model. It is important to note that for the purpose of this section, we are not interested in this model specifically, but rather the smoothness and fractal properties it possesses.
+where $\mu_{t}$ is the drift term, $Z_{t}$ is a standard Brownian Motion, $X_{t}$ is a fractional Ornstein–Uhlenbeck process with $\alpha>0$, $m\in\mathbb{R}$ and $0<H<1/2$ is the measured smoothness of the volatility. We should also mention that $Z$ and $W^{H}$ are correlated in general. This model was coined the Rough Fractional Stochastic Volatility (RFSV) model. It is important to note that for the purpose of this section, we are not interested in this model specifically, but rather the smoothness and fractal properties it possesses.
 \\
 
 Comparison of the smoothness of simulated data from this model to that of empirical data, provides ample evidence that volatility is indeed rough. A key part of this analysis was comparing the actual volatility of the S\&P over a 3500 day period with the volatility process generated by the model over the same time-frame. The results of which are shown in Figure \ref{fig:gatheral_2014_volplots}.
@@ -177,7 +176,7 @@ In this section, we describe how Rough Fractional Stochastic Volatility models c
 
 \subsubsection{Pricing under the Physical Measure, \mathbb{P}}
 
-As stated in the previous section, the distribution of increments of the logarithm of realized variance were found to be close to Gaussian, which motivates the use of a model where $\sigma_{t}$ is treated as a lognormal random variable. The time series of the realised variance was proposed to be modelled by:
+As stated in the previous section, the distribution of increments of the logarithm of realized variance were found to be close to Gaussian, which motivates the use of a model where $\sigma_{t}$ is treated as a log-normal random variable. The time series of the realised variance was proposed to be modelled by:
 
 \begin{equation}
 \label{eq:realizedvariance}
@@ -185,21 +184,20 @@ As stated in the previous section, the distribution of increments of the logarit
 \end{equation}
 
 where $W^{H}$ is fBM.
-Now, consider the Mandelbort-Van Ness representation of fBM $W_{H}$:
+Now, consider the Mandelbrot-Van Ness representation of fBM $W_{H}$ \cite{Mandelbrot1968}:
 
 \begin{equation}
 \label{eq:mandelbort}
-    W_{t}^{H} = C_{H} [\int_{-\infty}^{t} \frac{dW_{s}^{P}}{(t-s)^{\gamma}} - \int_{-\infty}^{0} \frac{dW_{s}^{P}}{(-s)^{\gamma}}]
+    W_{t}^{H} = C_{H} \left[ \int_{-\infty}^{t} \frac{dW_{s}^{P}}{(t-s)^{\gamma}} - \int_{-\infty}^{0} \frac{dW_{s}^{P}}{(-s)^{\gamma}}\right]
 \end{equation}
 
-
-In particular, if we choose $\gamma = .5-H$ and $C_{H} = \sqrt{\frac{2H\Gamma(3/2- H)}{\Gamma(H+.5) \Gamma(2-2H)}}$, then we can ensure the property of the covariance of fBM stated in [\ref{eqn:fBMcov}].
+In particular, if we choose $\gamma = 0.5-H$ and $C_{H} = \sqrt{\frac{2H\Gamma(3/2- H)}{\,\Gamma\,(H+0.5) \Gamma(2-2H)}}$, then we can ensure the property of the covariance of fBM stated in [\ref{eqn:fBMcov}].
 \\
 
-Let substitute [\ref{eq:mandelbort}] into [\ref{eq:realizedvariance}], then the evolution of the instantaneous variance $\nu_{u}$ under the physical measure P would be:
+Let us substitute [\ref{eq:mandelbort}] into [\ref{eq:realizedvariance}], then the evolution of the instantaneous variance $\nu_{u}$ under the physical measure P would be:
 \begin{equation}
 %\label{eq:realizedvariance}
-    log\upsilon_{u} - log\upsilon_{t} := 2  \nu [M_{t}(u) + Z_{t}(u)]
+    log\upsilon_{u} - log\upsilon_{t} := 2  \nu\, [M_{t}(u) + Z_{t}(u)]
 \end{equation}
 
 Here, $M_{t}(u)$ is independent of $\mathcal{F}_{t}$ with mean zero and variance $(u-t)^{2H} /(2H)$, and $Z_{t}(u)$ is $\mathcal{F}_{t}$-measurable.
@@ -216,16 +214,16 @@ With $\eta := 2 \nu C_{H}/ \sqrt{2H}$ we have $2\eta C_{h} M_{t}(u) = \eta \tild
 \label{eq:volunderP}
 \begin{split}
     \upsilon_{u} & = \upsilon_{t} \exp{(\eta\; \tilde{W_{t}^{P}(u)} + 2\eta\,C_{H}\,Z_{t}(u))} \\
-    & = \mathbb{E}^{P} [\upsilon_{u}| \mathcal{F}_{t}] \varepsilon (\eta \tilde{W_{t}^{P}(u)})]
+    & = \mathbb{E}^{P} [\upsilon_{u}| \mathcal{F}_{t}] \,\varepsilon\, (\eta \tilde{W_{t}^{P}(u)})
 \end{split}
 \end{equation}
  
- which is defined using two standard Brownian motions $Z^{P}$ and $W^{P}$ with a constant correlation $\rho$. We can also see that the conditional distribution of $\upsilon_{u}$ depends on $\mathcal{F}_{t}$ but only through the variance forecasts $E^{P} [\upsilon_{u}| \mathcal{F}_{t}]$. Therefore, in order to price options, we do not need to know the $\mathcal{F}_{t}$.
+ where $\varepsilon$ is defined as the "Wick" exponential. This model is defined using two standard Brownian motions $Z^{P}$ and $W^{P}$ with a constant correlation $\rho$. We can see that the conditional distribution of $\upsilon_{u}$ depends on $\mathcal{F}_{t}$ but only through the variance forecasts $E^{P} [\upsilon_{u}| \mathcal{F}_{t}]$. Therefore, in order to price options, we do not need to know the $\mathcal{F}_{t}$.
 \\
 
 It is important to recall that the dynamic of the price would be:
 \begin{equation}
-     \frac{dS_{u}}{S_{u}} = \mu_{t} du + \sqrt{\upsilon_{u}}dZ_{u}^{P},
+     \frac{dS_{u}}{S_{u}} = \mu_{t}\, du + \sqrt{\upsilon_{u}}\,dZ_{u}^{P},
 \end{equation}
 
 \subsubsection{Pricing under the Risk-Neutral Measure, \mathbb{Q}}
@@ -241,28 +239,29 @@ The following changes of measure are done:
 where $ t \leq u \leq T$, and:
 
 \begin{equation}
-    dW_{u}^{Q} = dW_{u}^{P} + [\rho \mu_{u} / \sqrt{\nu_{u}} + \rho \gamma_{u}] du
+    dW_{u}^{Q} = dW_{u}^{P} + \left[\frac{\rho \mu_{u}} {\sqrt{\nu_{u}} + \rho \gamma_{u}}\right] du
 \end{equation}
 
 In fact, let consider a general change of measure of the style:
 
 $$dW_{s}^{P} = dW_{s}^{Q} + \lambda_{s} ds$$
 
-with this visualisation, we can interpret $\lambda$as the price of volatility risk. In this sense, we can rewrite [\ref{eq:volunderP}] as:
+with this visualisation, we can interpret $\lambda$ as the price of volatility risk. In this sense, we can rewrite [\ref{eq:volunderP}] as:
 
 \begin{equation}
 \label{eq:volunderQ}
-    \upsilon_{u} & = E^{P} [\upsilon_{u}| \mathcal{F}_{t}] \varepsilon ( \eta \tilde{W_{t}^{Q}}(u)) exp [\eta \sqrt{2H} \int_{t}^{u} \frac{\lambda_{s}}{(u-s)^{\gamma}} ds]
+    \upsilon_{u} & = E^{P} [\upsilon_{u}| \mathcal{F}_{t}]\, \varepsilon\, ( \eta\, \tilde{W_{t}^{Q}}(u))\; exp \left[\eta \sqrt{2H} \int_{t}^{u} \frac{\lambda_{s}}{(u-s)^{\gamma}} ds\right]
 \end{equation}
 
 \subsection{The Rough Bergomi Model}
 \label{sec:rough_Bergomi}
 In this subsection, the Bergomi model is transformed into a Rough Bergomi Model, which has showed to fit the SPX volatility better than conventional Markovian stochastic models \cite{Bayer2016}.
+\\
 
 A relevant characteristic which distinguish among different volatility models is the term structure of the ATM volatility skew, defined as:
 
 \begin{equation}
-    \psi(\tau) = \lvert \frac{\partial}{\partial k} \sigma_{BS}(k,\tau) \rvert_{k = 0}
+    \psi(\tau) = \Big| \frac{\partial}{\partial k} \sigma_{BS}(k,\tau) \Big|_{k = 0}
 \end{equation}
 
 where $\tau = T - t$ is the time to maturity, and $k$ is the log-moneyness equal to $log(\frac{K}{S_{t}})$. Stochastic models present the ATM volatility skew to be constant for short dates and inversely proportional to $\tau$ for long dates. We can see in Figure \ref{fig:Bayer2016_vol_skew} how the skew volatility is proportional to $\tau^{-\alpha}$, for $0\leq \alpha \leq 1/2$. 
@@ -271,31 +270,31 @@ where $\tau = T - t$ is the time to maturity, and $k$ is the log-moneyness equal
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.85\textwidth ]{figs/Bayer2016_fig2.png}
-    \caption{Extracted from Bayer et al., 2016  \cite[Figure~2]{Bayer2016}. Plot shows change in volatility skew $\psi(\tau)$ with respect to $\tau$, time to expiry measured in years The points are non-parametric estimates of the S\&P ATM volatility skews as of 14/08/13. Red curve is the power-law fit $\psi(\tau) = A\tau^{−0.407}$, where $\tau$.}
+    \caption{Extracted from Bayer et al., 2016  \cite[Figure~2]{Bayer2016}. Plot shows change in volatility skew $\psi(\tau)$ with respect to $\tau$, time to expiry measured in years. The points represent non-parametric estimates of the S\&P ATM volatility skews as of 14/08/13. Red curve is the power-law fit $\psi(\tau) = A\tau^{-0.407}$.}
     \label{fig:Bayer2016_vol_skew}
-\end{figure}
+\end{figure} 
 
 Bergomi and Guyon (2012) derive a small noise expansion for the smile in a stochastic volatility model making use of a forward variance curve, where forward variance is defined as the expectation under the pricing measure of the future instantaneous variance. In this way, given a stochastic model written in the forward curve form, the term structure of ATM skew can be computed easily. The n-factor Bergomi variance curve model can be written as:
 
 \begin{equation}
 \label{eq:Bergomimodel}
-    \xi_{t}(u) = \xi_{0}(u) \epsilon(\sum_{i=1}^{n} \eta_{i} \int_{0}^{t} e^{-K_{i}(u-s) dW_{s}^{i}})
+    \xi_{t}(u) = \xi_{0}(u) \,\varepsilon\,\left[\sum_{i=1}^{n} \eta_{i} \int_{0}^{t} e^{-K_{i}(u-s) dW_{s}^{i}}\right]
 \end{equation}
 
 where $\varepsilon_{.}$ denotes the stochastic exponential and $\xi_{0}(.)$ denotes the initial forward variance curve. In this case, the Bergomi model generates a term structure volatility skew of the form:
 
-$$\sum_{i=1}^{} \frac{\eta_{i}}{K_{i}} (1- \frac{1-e^{-K_{i}} \tau}{{K_{i}} \tau})$$
+$$\sum_{i=1}^{} \frac{\eta_{i}}{K_{i}} \Big(1- \frac{1-e^{-K_{i}} \tau}{{K_{i}} \tau}\Big)$$
 
 Thus, to generate the empirically observed form of $\tau^{-\alpha}$ it is expected to replace the exponential kernels in [\ref{eq:Bergomimodel}] with a power-law kernel. Thus, we end up with the rBergomi model which can be simulated as:
 
 \begin{equation}
-    S_{t} = S_{0} \epsilon (\int_{0}^{t} \sqrt{\nu_{u}} dZ_{u})
+    S_{t} = S_{0} \,\varepsilon\, \Big(\int_{0}^{t} \sqrt{\nu_{u}} dZ_{u}\Big)
 \end{equation}
 \begin{equation}
-    \nu_{u} = \xi_{0}(u) \varepsilon ( \eta_{i} \sqrt{2H} \int_{0}^{u} \frac{1}{(u-s)^{\gamma}} dW_{s})
+    \nu_{u} = \xi_{0}(u)\, \varepsilon \, \Big( \eta_{i} \sqrt{2H} \int_{0}^{u} \frac{1}{(u-s)^{\gamma}} dW_{s}\Big)
 \end{equation}
 
-The rBergomi model is a non-Markivian generalization of the Bergomi model. This model consists of only three parameters: $H, \eta$ and $\rho$, where the later represents the correlation between volatility moves and prices moves. The parameters mentioned can be interpreted as:
+The rBergomi model is a non-Markovian generalisation of the Bergomi model. This model consists of only three parameters: $H, \eta$ and $\rho$, where the later represents the correlation between volatility moves and prices moves. The parameters mentioned can be interpreted as:
 %https://mfe.baruch.cuny.edu/wp-content/uploads/2018/02/RoughVolatilityColumbia2018.pdf
 
 \begin{itemize}
@@ -304,7 +303,7 @@ The rBergomi model is a non-Markivian generalization of the Bergomi model. This 
     \item keeping $\rho \eta$ but decreasing $\rho$, towards to be negative, makes the minimum of each smile move to higher strikes.
 \end{itemize}
 
-In figure \ref{fig:Gatheral2018Talk_fig8}, it is shown how rBergomi model fits the SPX option market. The data was taken on Wednesday prior to expiration of the given options, in order to make the shortest expiration smile more meaningful. Parameters chosen for this day were: $H = 0.05, \eta = 2.3$ and $\rho = -0.9$. It is impressive how only using three parameters, we could get a good fit of the whole SPX volatility surface. It is worth to mention, that rBergomi model did pretty well for extreme short-dated smile and there was no necessity of adding jumps to the model.
+In Figure \ref{fig:Gatheral2018Talk_fig8}, it is shown how rBergomi model fits the SPX option market. The data was taken on Wednesday prior to expiration of the given options, in order to make the shortest expiration smile more meaningful. Parameters chosen for this day were: $H = 0.05, \eta = 2.3$ and $\rho = -0.9$. It is impressive how only using three parameters, we could get a good fit of the whole SPX volatility surface. It is worth to mention, that rBergomi model did pretty well for extreme short-dated smile and there was no necessity of adding jumps to the model.
 
 \begin{figure}[htpb]
     \centering
@@ -313,7 +312,7 @@ In figure \ref{fig:Gatheral2018Talk_fig8}, it is shown how rBergomi model fits t
     \label{fig:Gatheral2018Talk_fig8}
 \end{figure}
 
-\subsection{The Rough Heston volatility Model}
+\subsection{The Rough Heston Model}
 \label{subsec:rough_heston}
 The classical Heston model has been introduced, as have the pitfalls  of these simplistic early option pricing models. The classical Heston model does not agree with time series in practice, and does not generate a volatility surface similar to that observed. However, there are flexibility benefits to a model with additional parameters, particularly when applying a rough volatility framework. Small Hurst parameters & fBM are introduced, and the Ricatti characteristic function can be replaced with with a fractional Ricatti characteristic function to form the rough Heston model, producing behaviour seen in both historical & implied volatility. This has been well discussed in \cite{OElEuch2018} and \cite{ElEuchRosenbaum2019}.
 \\
@@ -358,7 +357,7 @@ To continue with a selected Hurst parameter of $H < \frac{1}{2}$ as per Gatheral
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.9\textwidth ]{figs/Omar2016_fig51.jpg}
-    \caption{Extracted directly from El Euch and Rosenbaum, 2016, \cite[Figure~5.1]{Omar2016}. Implied volatility surface generated from a rough Heston model with careful calibration ($\alpha=0.62$)has been shown to have miraculously close approximation to historical volatility on S\&P (January 2010) for varying maturity dates (T).}
+    \caption{Extracted directly from El Euch and Rosenbaum, 2016, \cite[Figure~5.1]{Omar2016}. Implied volatility surface generated from a rough Heston model with careful calibration ($\alpha=0.62$)has been shown to have close approximation to historical volatility on S\&P (January 2010) for varying maturity dates (T).}
     \label{fig:elEuch_1}
 \end{figure}
 
@@ -367,8 +366,7 @@ One additional note on the suitability of the rough Heston model is that the  "s
 
 The models described in this section are all reliant on significant computational effort in order to do accurate pricing, as they all require calibration in order to find parameters that are representative of the market. In the next section we give a short account of improvements made that help with this.
 
-
-\section{Computational effort reduction}
+\section{Computational Cost Reduction}
 \label{sec:comp_advancement}
 Moving to a more generalised setting, we now focus on rough volatility models as an overall concept that we know are driven by fBM. As mentioned in \cite{Jacquier2020}, the use of fBM in such models carries a computational burden. Pricing via Monte Carlo simulation of the asset price and volatility processes is one pricing tool that functions well, but it can be slow in approximating continuous time solutions within a sufficient level of accuracy. This is particularly true for simulating non-Markovian processes due to the extra memory required to store previous process states. Here, we give a brief overview of some work that introduces potential ways to combat the computational expense of exact Monte Carlo simulation of the volatility process. Namely, we discuss the Hybrid scheme \cite{Bennedsen2017}, the Markovian representation of fBM \cite{Harms2020} and the extension of the Donsker theorem to fBM \cite{Horvath2019}. These methods were introduced to improve the efficiency of the simulation of fBM and rough volatility processes while maintaining good levels of accuracy.
 
@@ -382,6 +380,7 @@ X(t)=\int_{-\infty}^t g(t-s) \sigma(s) dW(s),  \ \  t\in\mathbb{R},
 \end{equation}
 
 where $\sigma_t$ is a predictable process with respect to the given filtration, $W$ is a standard Brownian motion and g is a deterministic function. It is mentioned in \cite{Bennedsen2017} that when $g(x) \propto x^\alpha$ and $\alpha \in (-\frac{1}{2}, \frac{1}{2}) \setminus \{0\}$, the process behaves (locally) like a fBM with Hurst parameter $H=\alpha+1/2$.  Therefore, being able to efficiently simulate such a process would help to improve computational efficiency for simulation in some rough volatility models.  
+\\
 
 The Hybrid scheme involves approximating the function $g$ using a step function except for near 0, where a power function is used for approximation. Through a series of derivations, the resulting discretisation scheme is written as a linear combination of a Riemann sum and Wiener integrals. The scheme is given by Equations
 \ref{eqn:hybrid1}-\ref{eqn:hybrid4}.  
@@ -444,10 +443,12 @@ By being able to extend this theorem to fBm, one could approximate the process u
 \label{subsec:tech_advancement}
 
 In addition to the aforementioned numerical approximations, it is worth to mention the relevance of the technological improvements to make the calibration of rough volatility models faster remaining with the same accuracy for pricing under this type of models.
+\\
 
- Ongoing improvements in technological availability and computational power have made methods, such as that presented by Horvath et al., \cite{Horvath2019}, increasingly accessible. In this work it is shown that neural networks have a significant impact on the computational burden presented by the simulation of rough volatility processes. The authors show that a speed up factor of approximately 12,500 (on average) can be achieved when using neural networks as opposed to standard Monte Carlo methods when calibrating parameters for rough volatility models. It is worth to mention that, the use of the neural network approach generalises very well to all types of rough volatility models. 
+ Ongoing improvements in technological availability and computational power have made methods, such as that presented by Horvath et al., \cite{Horvath2019}, increasingly accessible. In this work it is shown that neural networks have a significant impact on the computational burden presented by the simulation of rough volatility processes. The authors show that a speed up factor of approximately 12,500 (on average) can be achieved when using neural networks as opposed to standard Monte Carlo methods when calibrating parameters for rough volatility models. It is worth noting that the use of the neural network approach generalises very well to all types of rough volatility models. 
+ \\
  
- Due to the model speedup achieved by the use of neural networks, model calibrations can be achieved on the order of seconds, or milliseconds as is shown in Figure \ref{fig:Horvath2019_fig10_11}. This means that model calibration can be done in a real-time , making pricing fast enough either using gradient or gradient free methods, with the great advantage of a correct fit with the empirical data.
+ Due to the model speedup achieved by the use of neural networks, model calibrations can be achieved on the order of seconds, or milliseconds as is shown in Figure \ref{fig:Horvath2019_fig10_11}. This means that model calibration can be done in a real-time, making pricing fast enough regardless of gradient or gradient free methods, with the clear advantage of correctly fitting empirical data. The details of these methods are not explored here, only the magnitude of calibration time is of interest. 
  
  \begin{figure}[htpb]
     \centering
@@ -459,20 +460,21 @@ In addition to the aforementioned numerical approximations, it is worth to menti
 \section{Conclusion}
 \label{sec:summary&futurework}
  
-This report has described the importance and empirical evidence of how the volatility can not be considered as constant or deterministic, such as the Black-Scholes model assumes. In fact, modelling this parameter can be better modelled using stochastic models. However, this model have not had a good fit when comparing with the empirical volatility surface. 
+This report has described the importance of, and the motivation behind, the notion that volatility should not be considered as constant or deterministic as is done in the original Black-Scholes model. We learn in Section \ref{sec:rough_vol_evidence} that volatility should be represented as a stochastic process, i.e. it possesses its own non-deterministic dynamics. However, standard stochastic models do not exhibit a good fit to the empirical volatility surface. This is a key result that led to rough volatility models being widely accepted.
 \\
 
-Gatheral et al. showed evidence from the market data where he found that the increments of the log-volatility process exhibit a scaling property in expectation with a constant smoothness parameter $H$, thus motivating to model the volatility process using a Fractional Brownian motion. The innovation which lead to the new "rough volatility model" was to consider the Hurst parameter $H < 1/2$ meaning that the increments of the fractional Brownian motion are negatively correlated. Using this type of model we showed in section 3.1 how over a period of 3500 days, using rough volatility models we had a better fit to the actual volatility, figure (). In the same way, using this type of model, it was shown a better fit to the ATM skew specially for short maturities.  In fact, it is mentioned the importance of this type of model to be a consequence of the no arbitrage principle and market impact.
+Gatheral et al. \cite{Gatheral2014} showed evidence from the market data where the increments of the log-volatility process were seen to exhibit a scaling property in expectation with a constant smoothness parameter $H$, almost identical to the scaling property which fBm satisfies. This motivated the modelling of the volatility process using fBm. The innovation that led to the new `rough volatility model' was to consider the Hurst parameter $0<H<1/2$ and that the increments of the fBm are negatively correlated. Using the RFSV model discussed in Section \ref{sec:rough_vol_evidence}, we saw how simulated data produced by such rough volatility models produce a striking resemblance to the observed volatility in a number of ways, see Figure \ref{fig:gatheral_2014_volplots}. In the same way, using this type of model, it was shown a better fit to the ATM skew, especially for short maturities.  
 \\
 
-Moreover, in 3.2 it was shown how Rough Fractional Stochastic Volatility models can  be  used  to  price  contingent  claims  and  thus  for  option  pricing, by having a change of measure from the physical measure to the risk netrual measure (using Girsanov) raising the concept of the price of volatillity risk from the change of measure formula. This leads us to the ability of making stochastic models to be rough, such as the rough heston volatility model or the rBergomi model. A relevant feature to mention is this type of model have shown us the necessity of adding jumps to the model for achieving a better fit to the empirical data.
+In Section \ref{sec:Pricing}, it was shown how Rough Volatility models can  be  used  to  price  contingent  claims  and  thus  for  pricing options. This was done by performing a change of measure from the physical measure to the risk-neutral measure (using Girsanov's theorem), raising the concept of the price of volatility risk from the change of measure formula. This enables us to make stochastic models rough, such as the rough Heston volatility model or the `rBergomi' model. It is worth mentioning that both model types do not require jump processes yet demonstrate the same unpredictable jumping characteristics when achieving a better fit to the empirical data.
 \\
 
-However, even if the model can achieve a great ... to the market data, calibration of parameters might produce a high computational effort such as its simulation. Eventhough Montecarlo method is widely used for simualtion of any SDE, it has the great disadvantage of its poor speed?. Therefore in section 4, we present different numerical schemes to reduce this computational cost. Hybrid scheme has the advantage of..., Markovian...., and the extension of the.... In the same way, computational power improvement has made the use of neural networks more accessible. It was shown in () how by using this tool, a speed up factor of approximately 12,500 was achieved.
+Although rough volatility models have been shown to deliver encouraging results when comparing to market data, the calibration of parameters for such models, as well as simulation using these models are liable to have a relatively high computational cost. Even though Monte Carlo methods are widely used for the simulation of any stochastic process (e.g. for pricing), these methods can be generally quite slow. In Section \ref{sec:comp_advancement}, we present several numerical schemes that reduce the computational cost of Monte Carlo simulation. The Hybrid Scheme is an improvement on the Riemann sum scheme whereby it captures the steepness of the function $g$ near zero in a Brownian semistationary process, while still maintaining a relatively low computational cost. fBM falls into this categories of processes under certain settings, which allows us to apply this scheme directly to fBm. The Markovian representation of fBm allows us to approximate fBm by a weighted sum of $n$ Orstein-Uhlenbeck processes which converges to the true solution, giving the Markovian property that is desired for efficient simulation. And finally, the extension of the Donsker's theorem to fBm enables us to approximate fBm using a sequence of i.i.d. random variables, which also gives us the desired Markovian property. In the same way, improvements in computational power has made the use of neural networks more accessible. As discussed in Section \ref{subsec:tech_advancement}, a speed up factor of approximately 12,500 on average can be achieved compared to using standard Monte Carlo methods.
 \\
 
+Advancements, such as those mentioned in Section \ref{sec:comp_advancement}, in overcoming the the computational burden that comes with modelling of rough volatility have created an active area of research. Work in this particular area continues with the aim of being able to use rough volatility models for key financial purposes, such as pricing and risk management, while minimising the computational penalties that arise from such models. 
 
-
+%If volatility is rough, be rough with volatility...
 
 % In the vast majority of papers this section is not present. It could be used to provide a brief summary of the paper or some areas for further research. Most likely it won't be useful for the final essays.
 
